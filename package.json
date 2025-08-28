@@ -9,6 +9,8 @@
     "lint": "eslint ./src --ext .ts",
     "format": "prettier ./src --write",
     "format:check": "prettier ./src --check",
+    "test": "bun test ./src",
+    "test:coverage": "bun test --coverage ./src",
     "check": "tsc --noEmit",
     "circular": "madge --circular ./src --extensions ts"
   },
@@ -18,7 +20,9 @@
   "description": "Lightweight TypeScript shim for the image-builder-cli",
   "dependencies": {
     "chalk": "4.1.2",
-    "hono": "4.8.4"
+    "hono": "4.8.4",
+    "http-status-codes": "2.3.0",
+    "zod": "4.1.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.3.1",

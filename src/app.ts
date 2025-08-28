@@ -2,6 +2,8 @@ import { Hono } from 'hono';
 import { pinoLogger } from 'hono-pino';
 import { prettyJSON } from 'hono/pretty-json';
 
+import { api } from '@app/api';
+import { API_ENDPOINT } from '@app/constants';
 import { notFound, onError } from '@app/errors';
 import { logger } from '@app/logger';
 
@@ -16,4 +18,4 @@ export const app = new Hono()
   // uncaught
   .onError(onError)
   .route('*', middleware)
-  .get('/health', (c) => c.json({ message: 'OK', ok: true }, 200));
+  .route(API_ENDPOINT, api);

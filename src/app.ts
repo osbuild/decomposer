@@ -1,13 +1,14 @@
 import { Hono } from 'hono';
-import { logger } from 'hono/logger';
+import { pinoLogger } from 'hono-pino';
 import { prettyJSON } from 'hono/pretty-json';
 
 import { notFound, onError } from '@app/errors';
+import { logger } from '@app/logger';
 
 const middleware = new Hono()
   .notFound(notFound)
   .use(prettyJSON())
-  .use(logger());
+  .use(pinoLogger({ pino: logger }));
 
 export const app = new Hono()
   // we need to catch the errors either at the router

@@ -50,6 +50,7 @@
     "httpyac": "6.16.7",
     "madge": "8.0.0",
     "openapi-format": "1.27.3",
+    "pouchdb-adapter-memory": "9.0.0",
     "prettier": "3.6.2",
     "ts-node": "10.9.2",
     "typescript": "5.8.3",

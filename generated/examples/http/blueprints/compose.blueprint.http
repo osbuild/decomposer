@@ -1,0 +1,12 @@
+# use .env SOCKET_PATH or fallback to default
+@socket={{SOCKET_PATH ?? '/run/decomposer-httpd.sock' }}
+@host=http://unix{{ socket }}:
+
+POST /api/image-builder-composer/v2/blueprints/{{id}}/compose HTTP/1.1
+Content-Type: application/json
+
+{
+  "image_types": [
+    "guest-image"
+  ]
+}

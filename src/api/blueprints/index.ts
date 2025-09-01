@@ -3,7 +3,7 @@ import Maybe from 'true-myth/maybe';
 
 import type { AppContext } from '@app/types';
 
-import type { Compose, Composes } from '../composes';
+import type { Compose, ComposeId, Composes } from '../composes';
 import { paginate } from '../pagination';
 import type {
   Blueprint,
@@ -146,6 +146,27 @@ export const blueprints = new Hono<AppContext>()
           paginate<Compose>(composes, Maybe.of(limit), Maybe.of(offset)),
         );
       },
+      Err: (error) => {
+        const { body, code } = error.response();
+        return ctx.json(body, code);
+      },
+    });
+  })
+
+  /**
+   * List blueprint composes
+   *
+   * @rest compose.blueprint
+   * @example src/__fixtures__/image-types.json
+   */
+  .post('/blueprints/:id/compose', validators.composeBlueprint, async (ctx) => {
+    const id = ctx.req.param('id');
+    const body = ctx.req.valid('json');
+    const { blueprint: service } = ctx.get('services');
+    const result = await service.compose(id, body);
+
+    return result.match({
+      Ok: ({ id }) => ctx.json<ComposeId>({ id }),
       Err: (error) => {
         const { body, code } = error.response();
         return ctx.json(body, code);

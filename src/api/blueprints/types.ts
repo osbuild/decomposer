@@ -1,5 +1,6 @@
 import type { Schemas } from '@gen/decomposer';
 
+import type { ComposeId } from '../composes';
 import type { ServiceTask as Task } from '../types';
 
 export type BlueprintMetadata = Schemas['BlueprintItem'];
@@ -23,4 +24,5 @@ export type BlueprintService = {
   get: (id: string) => Task<Blueprint>;
   update: (id: string, request: BlueprintRequest) => Task<BlueprintId>;
   delete: (id: string) => Task<unknown>;
+  compose: (id: string, body?: BlueprintBody) => Task<ComposeId>;
 };

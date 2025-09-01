@@ -16,9 +16,16 @@ describe('Blueprints handler tests', async () => {
   const { client } = createTestClient(store);
 
   afterAll(async () => {
+    // clean up the compose so it doesn't
+    // pollute other tests.
+    await client.composes[':id'].$delete({
+      param: { id: newCompose },
+    });
+    await Bun.sleep(4);
     await rmdir(tmp, { recursive: true });
   });
 
+  let newCompose = '';
   let newBlueprint = '';
   const updatedName = 'New Name';
 
@@ -140,6 +147,46 @@ describe('Blueprints handler tests', async () => {
       expect(body.meta.count).toBe(0);
       expect(body.data).not.toBeUndefined();
       expect(body.data.length).toBe(0);
+    });
+
+    it('should queue a compose for the blueprint', async () => {
+      const res = await client.blueprints[':id'].compose.$post({
+        param: { id: newBlueprint },
+        json: {},
+      });
+      expect(res.status).toBe(StatusCodes.OK);
+      const { id } = await res.json();
+      newCompose = id;
+      expect(validate(id)).toBeTrue();
+    });
+
+    it('should now return one compose', async () => {
+      const res = await client.blueprints[':id'].composes.$get({
+        param: { id: newBlueprint },
+      });
+      expect(res.status).toBe(StatusCodes.OK);
+      const body = (await res.json()) as Composes;
+      expect(body).not.toBeUndefined();
+      expect(body.meta.count).toBe(1);
+      expect(body.data).not.toBeUndefined();
+      expect(body.data.length).toBe(1);
+    });
+
+    it('should return 422 Response with bad input', async () => {
+      const res = await client.blueprints[':id'].compose.$post({
+        param: { id: newBlueprint },
+        // @ts-expect-error we're testing for this
+        json: { image_types: ['hello'] },
+      });
+      expect(res.status).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+    });
+
+    it('it should delete a blueprint compose', async () => {
+      await Bun.sleep(4);
+      const res = await client.composes[':id'].$delete({
+        param: { id: newCompose },
+      });
+      expect(res.status).toBe(StatusCodes.OK);
     });
   });
 

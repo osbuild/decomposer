@@ -12,8 +12,8 @@ export const createMiddleware = (
   queue: JobQueue<ComposeRequest>,
   store: Store,
 ) => {
-  const blueprintService = new services.Blueprint(store);
   const composeService = new services.Compose(queue, store);
+  const blueprintService = new services.Blueprint(store, composeService);
 
   return new Hono<AppContext>()
     .notFound(notFound)

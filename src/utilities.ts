@@ -1,3 +1,5 @@
+import { Maybe } from 'true-myth/maybe';
+
 export const removeSocket = async (socket: string) => {
   try {
     await Bun.file(socket).unlink();
@@ -9,4 +11,16 @@ export const removeSocket = async (socket: string) => {
     }
     console.error(error);
   }
+};
+
+export const maybeEmptyObject = <T>(obj?: T): Maybe<T> => {
+  if (!obj) {
+    return Maybe.nothing(undefined);
+  }
+
+  if (Object.keys(obj).length === 0 && obj.constructor === Object) {
+    return Maybe.nothing(undefined);
+  }
+
+  return Maybe.just(obj);
 };

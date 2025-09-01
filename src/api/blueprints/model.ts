@@ -3,8 +3,13 @@ import { v4 as uuid } from 'uuid';
 
 import { normalizeError } from '@app/errors';
 import type { BlueprintDocument } from '@app/store';
+import { maybeEmptyObject } from '@app/utilities';
 
-import type { BlueprintMetadata, BlueprintRequest } from './types';
+import type {
+  BlueprintBody,
+  BlueprintMetadata,
+  BlueprintRequest,
+} from './types';
 import * as validators from './validators';
 
 export class Model {
@@ -45,8 +50,22 @@ export class Model {
     );
   }
 
-  async findById(id: string) {
-    return Task.tryOrElse(normalizeError, async () => this.store.get(id));
+  async findById(id: string, body?: BlueprintBody) {
+    return Task.tryOrElse(normalizeError, async () => {
+      const blueprint = await this.store.get(id);
+
+      return maybeEmptyObject<BlueprintBody>(body).match({
+        Nothing: () => blueprint,
+        Just: (body) => {
+          return {
+            ...blueprint,
+            image_requests: blueprint.image_requests.filter((ir) =>
+              body.image_types?.includes(ir.image_type),
+            ),
+          };
+        },
+      }) as BlueprintDocument;
+    });
   }
 
   async update(id: string, changes: BlueprintRequest) {

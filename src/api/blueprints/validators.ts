@@ -3,11 +3,25 @@ import { parserFor } from 'true-myth-zod';
 
 import { DatabaseError, ValidationError } from '@app/errors';
 import type { BlueprintDocument } from '@app/store';
-import { BlueprintItem, CreateBlueprintRequest } from '@gen/decomposer/zod';
+import {
+  BlueprintItem,
+  CreateBlueprintRequest,
+  composeBlueprint_Body,
+} from '@gen/decomposer/zod';
 
 export const createBlueprint = zValidator(
   'json',
   CreateBlueprintRequest,
+  (result) => {
+    if (!result.success) {
+      throw new ValidationError(result.error);
+    }
+  },
+);
+
+export const composeBlueprint = zValidator(
+  'json',
+  composeBlueprint_Body,
   (result) => {
     if (!result.success) {
       throw new ValidationError(result.error);

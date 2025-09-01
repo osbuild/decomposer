@@ -103,6 +103,25 @@ export const blueprints = new Hono<AppContext>()
         return ctx.json(body, code);
       },
     });
+  })
+
+  /**
+   * Delete blueprint
+   *
+   * @rest delete
+   */
+  .delete('/blueprints/:id', async (ctx) => {
+    const id = ctx.req.param('id');
+    const { blueprint: service } = ctx.get('services');
+    const result = await service.delete(id);
+
+    return result.match({
+      Ok: () => ctx.json({ message: 'OK' }),
+      Err: (error) => {
+        const { body, code } = error.response();
+        return ctx.json(body, code);
+      },
+    });
   });
 
 export type * from './types';

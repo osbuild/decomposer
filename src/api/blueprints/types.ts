@@ -22,4 +22,5 @@ export type BlueprintService = {
   add: (request: BlueprintRequest) => Task<BlueprintId>;
   get: (id: string) => Task<Blueprint>;
   update: (id: string, request: BlueprintRequest) => Task<BlueprintId>;
+  delete: (id: string) => Task<unknown>;
 };

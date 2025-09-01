@@ -127,4 +127,31 @@ describe('Blueprints handler tests', async () => {
       expect(res.status).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
     });
   });
+
+  describe('blueprint delete tests', () => {
+    it('should delete a blueprint', async () => {
+      await Bun.sleep(4);
+      const res = await client.blueprints[':id'].$delete({
+        param: { id: newBlueprint },
+      });
+      expect(res.status).toBe(StatusCodes.OK);
+    });
+
+    it('should have no blueprints again', async () => {
+      const res = await client.blueprints.$get();
+      expect(res.status).toBe(StatusCodes.OK);
+      const body = (await res.json()) as Blueprints;
+      expect(body).not.toBeUndefined();
+      expect(body.meta.count).toBe(0);
+      expect(body.data).not.toBeUndefined();
+      expect(body.data.length).toBe(0);
+    });
+
+    it('should return a 404 Response for a non-existing blueprint', async () => {
+      const res = await client.blueprints[':id'].$delete({
+        param: { id: '123' },
+      });
+      expect(res.status).toBe(StatusCodes.NOT_FOUND);
+    });
+  });
 });

@@ -177,6 +177,7 @@ DELETE /api/image-builder-composer/v2/composes/{{id}} HTTP/1.1
 -- `POST /api/image-builder-composer/v2/blueprints - Create blueprint`
 -- `GET /api/image-builder-composer/v2/blueprints/:id - Get blueprint`
 -- `PUT /api/image-builder-composer/v2/blueprints/:id - Edit blueprint`
+-- `DELETE /api/image-builder-composer/v2/blueprints/:id - Delete blueprint`
 
 ### List blueprints
 
@@ -374,4 +375,25 @@ Content-Type: application/json
     ]
   }
 }
+```
+
+### Delete blueprint
+
+Example curl request:
+
+```bash
+SOCKET="${SOCKET_PATH:-'/run/decomposer-httpd.sock'}"
+
+curl --silent --unix-socket $SOCKET \
+  --request DELETE "http://localhost/api/image-builder-composer/v2/blueprints/${1}"
+```
+
+Example HTTP request:
+
+```http
+# use .env SOCKET_PATH or fallback to default
+@socket={{SOCKET_PATH ?? '/run/decomposer-httpd.sock' }}
+@host=http://unix{{ socket }}:
+
+DELETE /api/image-builder-composer/v2/blueprints/{{id}} HTTP/1.1
 ```

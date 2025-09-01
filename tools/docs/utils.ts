@@ -97,7 +97,7 @@ export const mapTemplates = (tsDocs: tsDoc[], component: string) => {
     };
 
     const doc = tsDocs[index];
-    if (route.method === 'POST') {
+    if (route.method === 'POST' || route.method === 'PUT') {
       const input = doc?.tags.find((t) => t.tag === 'example');
       const str = input!.name;
       const content = await Bun.file(str).json();

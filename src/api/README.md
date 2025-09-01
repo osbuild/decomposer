@@ -176,6 +176,7 @@ DELETE /api/image-builder-composer/v2/composes/{{id}} HTTP/1.1
 -- `GET /api/image-builder-composer/v2/blueprints - List blueprints`
 -- `POST /api/image-builder-composer/v2/blueprints - Create blueprint`
 -- `GET /api/image-builder-composer/v2/blueprints/:id - Get blueprint`
+-- `PUT /api/image-builder-composer/v2/blueprints/:id - Edit blueprint`
 
 ### List blueprints
 
@@ -295,4 +296,82 @@ Example HTTP request:
 @host=http://unix{{ socket }}:
 
 GET /api/image-builder-composer/v2/blueprints/{{id}} HTTP/1.1
+```
+
+### Edit blueprint
+
+Example curl request:
+
+```bash
+SOCKET="${SOCKET_PATH:-'/run/decomposer-httpd.sock'}"
+
+curl --silent --unix-socket $SOCKET \
+  --request PUT "http://localhost/api/image-builder-composer/v2/blueprints/${1}" \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "name": "decomposer-test-blueprint",
+  "description": "Blueprint to test the decomposer shim",
+  "distribution": "fedora-41",
+  "image_requests": [
+    {
+      "architecture": "x86_64",
+      "image_type": "guest-image",
+      "upload_request": {
+        "type": "aws.s3",
+        "options": {}
+      }
+    }
+  ],
+  "customizations": {
+    "users": [
+      {
+        "name": "test",
+        "password": "password42",
+        "groups": [
+          "wheel"
+        ],
+        "hasPassword": true
+      }
+    ]
+  }
+}'
+```
+
+Example HTTP request:
+
+```http
+# use .env SOCKET_PATH or fallback to default
+@socket={{SOCKET_PATH ?? '/run/decomposer-httpd.sock' }}
+@host=http://unix{{ socket }}:
+
+PUT /api/image-builder-composer/v2/blueprints/{{id}} HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "decomposer-test-blueprint",
+  "description": "Blueprint to test the decomposer shim",
+  "distribution": "fedora-41",
+  "image_requests": [
+    {
+      "architecture": "x86_64",
+      "image_type": "guest-image",
+      "upload_request": {
+        "type": "aws.s3",
+        "options": {}
+      }
+    }
+  ],
+  "customizations": {
+    "users": [
+      {
+        "name": "test",
+        "password": "password42",
+        "groups": [
+          "wheel"
+        ],
+        "hasPassword": true
+      }
+    ]
+  }
+}
 ```

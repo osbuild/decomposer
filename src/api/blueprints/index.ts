@@ -81,6 +81,28 @@ export const blueprints = new Hono<AppContext>()
         return ctx.json(body, code);
       },
     });
+  })
+
+  /**
+   * Edit blueprint
+   *
+   * @rest update
+   * @example src/__fixtures__/blueprint-request.json
+   */
+  .put('/blueprints/:id', validators.createBlueprint, async (ctx) => {
+    const id = ctx.req.param('id');
+    const { blueprint: service } = ctx.get('services');
+    const result = await service.update(id, ctx.req.valid('json'));
+
+    return result.match({
+      Ok: ({ id }) => {
+        return ctx.json<BlueprintId>({ id });
+      },
+      Err: (error) => {
+        const { body, code } = error.response();
+        return ctx.json(body, code);
+      },
+    });
   });
 
 export type * from './types';

@@ -21,4 +21,5 @@ export type BlueprintService = {
   all: () => Task<BlueprintMetadata[]>;
   add: (request: BlueprintRequest) => Task<BlueprintId>;
   get: (id: string) => Task<Blueprint>;
+  update: (id: string, request: BlueprintRequest) => Task<BlueprintId>;
 };

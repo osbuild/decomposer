@@ -19,6 +19,7 @@ describe('Blueprints handler tests', async () => {
   });
 
   let newBlueprint = '';
+  const updatedName = 'New Name';
 
   describe('get blueprints test', () => {
     it('should initially have no blueprints', async () => {
@@ -79,6 +80,51 @@ describe('Blueprints handler tests', async () => {
         param: { id: '1234' },
       });
       expect(res.status).toBe(StatusCodes.NOT_FOUND);
+    });
+  });
+
+  describe('blueprint update tests ', () => {
+    it('should update the blueprint and return 200', async () => {
+      const res = await client.blueprints[':id'].$put({
+        param: {
+          id: newBlueprint,
+        },
+        json: {
+          ...(blueprintRequest as BlueprintRequest),
+          name: updatedName,
+        },
+      });
+      expect(res.status).toBe(StatusCodes.OK);
+    });
+
+    it('should get the blueprint with updates', async () => {
+      await Bun.sleep(4);
+      const res = await client.blueprints[':id'].$get({
+        param: { id: newBlueprint },
+      });
+      expect(res.status).toBe(StatusCodes.OK);
+      const body = (await res.json()) as Blueprints;
+      expect(body.name).toBe(updatedName);
+    });
+
+    it('should return a 404 Response for a non-existing blueprint', async () => {
+      const res = await client.blueprints[':id'].$put({
+        param: {
+          id: '123',
+        },
+        json: blueprintRequest as BlueprintRequest,
+      });
+      expect(res.status).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('should return 422 Response with bad input', async () => {
+      const res = await client.blueprints[':id'].$put({
+        param: {
+          id: '123',
+        },
+        json: {} as BlueprintRequest,
+      });
+      expect(res.status).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
     });
   });
 });

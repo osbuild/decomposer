@@ -48,4 +48,17 @@ export class Model {
   async findById(id: string) {
     return Task.tryOrElse(normalizeError, async () => this.store.get(id));
   }
+
+  async update(id: string, changes: BlueprintRequest) {
+    return Task.tryOrElse(normalizeError, async () => {
+      const blueprint = await this.store.get(id);
+
+      await this.store.put({
+        ...blueprint,
+        ...changes,
+      });
+
+      return { id };
+    });
+  }
 }

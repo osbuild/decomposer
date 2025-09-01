@@ -94,3 +94,4 @@ export const composes = new Hono<AppContext>()
   });
 
 export type * from './types';
+export { ComposeService } from './service';

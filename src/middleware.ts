@@ -12,6 +12,7 @@ export const createMiddleware = (
   queue: JobQueue<ComposeRequest>,
   store: Store,
 ) => {
+  const blueprintService = new services.Blueprint(store);
   const composeService = new services.Compose(queue, store);
 
   return new Hono<AppContext>()
@@ -20,6 +21,7 @@ export const createMiddleware = (
     .use(pinoLogger({ pino: logger }))
     .use(async (ctx, next) => {
       ctx.set('services', {
+        blueprint: blueprintService,
         compose: composeService,
       });
       await next();

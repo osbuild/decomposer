@@ -6,16 +6,16 @@ import { v4 as uuid } from 'uuid';
 
 import { Status } from '@app/constants';
 import { normalizeError } from '@app/errors';
-import type { ComposeDocument, Store } from '@app/store';
+import type { ComposeDocument } from '@app/store';
 
-import type { Compose, ComposeRequest } from './types';
+import type { Compose, ComposeRequest, ComposeStore } from './types';
 import * as validators from './validators';
 
 export class Model {
-  private store: Store;
+  private store: ComposeStore;
   private mutex: Mutex;
 
-  constructor(store: Store) {
+  constructor(store: ComposeStore) {
     this.store = store;
     this.mutex = new Mutex();
   }

@@ -3,8 +3,8 @@ import { Hono } from 'hono';
 import { onError } from '@app/errors';
 import type { AppContext } from '@app/types';
 
-import { composes } from './composes';
-import { ComposeService } from './composes/service';
+import { BlueprintService, blueprints } from './blueprints';
+import { ComposeService, composes } from './composes';
 import { meta } from './meta';
 
 export const api = new Hono<AppContext>()
@@ -12,10 +12,13 @@ export const api = new Hono<AppContext>()
   // level otherwise the errors go uncaught
   .onError(onError)
   .route('/', meta)
-  .route('/', composes);
+  .route('/', composes)
+  .route('/', blueprints);
 
 export const services = {
+  Blueprint: BlueprintService,
   Compose: ComposeService,
 };
 
 export type * from './composes/types';
+export type * from './blueprints/types';

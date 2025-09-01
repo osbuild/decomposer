@@ -170,3 +170,28 @@ Example HTTP request:
 
 DELETE /api/image-builder-composer/v2/composes/{{id}} HTTP/1.1
 ```
+
+## Blueprint Endpoints
+
+-- `GET /api/image-builder-composer/v2/blueprints - List blueprints`
+
+### List blueprints
+
+Example curl request:
+
+```bash
+SOCKET="${SOCKET_PATH:-'/run/decomposer-httpd.sock'}"
+
+curl --silent --unix-socket $SOCKET \
+  --request GET "http://localhost/api/image-builder-composer/v2/blueprints"
+```
+
+Example HTTP request:
+
+```http
+# use .env SOCKET_PATH or fallback to default
+@socket={{SOCKET_PATH ?? '/run/decomposer-httpd.sock' }}
+@host=http://unix{{ socket }}:
+
+GET /api/image-builder-composer/v2/blueprints HTTP/1.1
+```

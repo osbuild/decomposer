@@ -1,6 +1,7 @@
 import { parse } from 'comment-parser';
 import path from 'path';
 
+import { blueprints } from '@app/api/blueprints';
 import { composes } from '@app/api/composes';
 import { meta } from '@app/api/meta';
 
@@ -14,6 +15,10 @@ const components = {
   composes: {
     title: 'Compose Endpoints',
     routes: composes.routes,
+  },
+  blueprints: {
+    title: 'Blueprint Endpoints',
+    routes: blueprints.routes,
   },
 };
 
@@ -34,10 +39,11 @@ const getComponentDetails = async (key: keyof typeof components) => {
 
 const metaDetails = await getComponentDetails('meta');
 const composesDetails = await getComponentDetails('composes');
+const blueprintsDetails = await getComponentDetails('blueprints');
 
 const data = {
   ...commonFields,
-  endpoint: [metaDetails, composesDetails],
+  endpoint: [metaDetails, composesDetails, blueprintsDetails],
 };
 
 console.log('📄 Generating API Docs');

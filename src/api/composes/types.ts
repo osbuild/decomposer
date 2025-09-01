@@ -1,5 +1,5 @@
 import type { Status } from '@app/constants';
-import type { ComposeDocument } from '@app/store';
+import type { ComposeDocument, Store } from '@app/store';
 import type { Schemas } from '@gen/decomposer';
 
 import type { ServiceTask as Task } from '../types';
@@ -14,6 +14,8 @@ export type ComposeStatus = Schemas['ComposeStatus'];
 // omit the `id` since this will be used for a pouchdb
 // document. pouchdb uses `_id` as the index
 export type ComposeWithBuildStatus = Omit<Compose, 'id'> & ComposeBuildStatus;
+
+export type ComposeStore = Pick<Store, 'path' | 'composes'>;
 
 export type ComposeService = {
   all: () => Task<Compose[]>;

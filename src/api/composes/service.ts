@@ -14,7 +14,10 @@ export class ComposeService implements Service {
 
   constructor(queue: JobQueue<ComposeRequest>, store: Store) {
     this.queue = queue;
-    this.model = new Model(store);
+    this.model = new Model({
+      path: store.path,
+      composes: store.composes,
+    });
     this.queue.events.on('message', async ({ data }: JobResult) => {
       await this.update(data.id, { status: data.result });
     });

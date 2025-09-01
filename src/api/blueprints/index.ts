@@ -3,6 +3,7 @@ import Maybe from 'true-myth/maybe';
 
 import type { AppContext } from '@app/types';
 
+import type { Compose, Composes } from '../composes';
 import { paginate } from '../pagination';
 import type {
   Blueprint,
@@ -117,6 +118,34 @@ export const blueprints = new Hono<AppContext>()
 
     return result.match({
       Ok: () => ctx.json({ message: 'OK' }),
+      Err: (error) => {
+        const { body, code } = error.response();
+        return ctx.json(body, code);
+      },
+    });
+  })
+
+  /**
+   * List blueprint composes
+   *
+   * @rest blueprint.composes
+   */
+  .get('/blueprints/:id/composes', async (ctx) => {
+    const id = ctx.req.param('id');
+    const { limit, offset } = ctx.req.query();
+    const { compose: service } = ctx.get('services');
+    const result = await service.all(id);
+
+    // TODO: look at filters
+    // - ignoreImageTypes
+    // - blueprint_version
+    //   - this may not be possible since we only store the latest
+    return result.match({
+      Ok: (composes) => {
+        return ctx.json<Composes>(
+          paginate<Compose>(composes, Maybe.of(limit), Maybe.of(offset)),
+        );
+      },
       Err: (error) => {
         const { body, code } = error.response();
         return ctx.json(body, code);

@@ -18,7 +18,7 @@ export type ComposeWithBuildStatus = Omit<Compose, 'id'> & ComposeBuildStatus;
 export type ComposeStore = Pick<Store, 'path' | 'composes'>;
 
 export type ComposeService = {
-  all: () => Task<Compose[]>;
+  all: (blueprintId?: string) => Task<Compose[]>;
   add: (request: ComposeRequest) => Task<ComposeId>;
   status: (id: string) => Task<ComposeStatus>;
   update: (id: string, changes: Partial<ComposeDocument>) => Task<ComposeId>;

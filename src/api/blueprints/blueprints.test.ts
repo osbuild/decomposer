@@ -8,6 +8,7 @@ import { validate } from 'uuid';
 import { blueprintRequest, createTestClient, createTestStore } from '@fixtures';
 
 import type { BlueprintRequest, Blueprints } from '.';
+import type { Composes } from '../composes';
 
 describe('Blueprints handler tests', async () => {
   const tmp = await mkdtemp(path.join(tmpdir(), 'decomposer-test'));
@@ -125,6 +126,20 @@ describe('Blueprints handler tests', async () => {
         json: {} as BlueprintRequest,
       });
       expect(res.status).toBe(StatusCodes.UNPROCESSABLE_ENTITY);
+    });
+  });
+
+  describe('blueprint composes tests', () => {
+    it('should initially have no composes', async () => {
+      const res = await client.blueprints[':id'].composes.$get({
+        param: { id: newBlueprint },
+      });
+      expect(res.status).toBe(StatusCodes.OK);
+      const body = (await res.json()) as Composes;
+      expect(body).not.toBeUndefined();
+      expect(body.meta.count).toBe(0);
+      expect(body.data).not.toBeUndefined();
+      expect(body.data.length).toBe(0);
     });
   });
 

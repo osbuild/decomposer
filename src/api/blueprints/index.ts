@@ -4,7 +4,8 @@ import Maybe from 'true-myth/maybe';
 import type { AppContext } from '@app/types';
 
 import { paginate } from '../pagination';
-import type { BlueprintMetadata, Blueprints } from './types';
+import type { BlueprintId, BlueprintMetadata, Blueprints } from './types';
+import * as validators from './validators';
 
 export const blueprints = new Hono<AppContext>()
 
@@ -27,6 +28,27 @@ export const blueprints = new Hono<AppContext>()
             Maybe.of(offset),
           ),
         );
+      },
+      Err: (error) => {
+        const { body, code } = error.response();
+        return ctx.json(body, code);
+      },
+    });
+  })
+
+  /**
+   * Create blueprint
+   *
+   * @rest create
+   * @example src/__fixtures__/blueprint-request.json
+   */
+  .post('/blueprints', validators.createBlueprint, async (ctx) => {
+    const { blueprint: service } = ctx.get('services');
+    const result = await service.add(ctx.req.valid('json'));
+
+    return result.match({
+      Ok: ({ id }) => {
+        return ctx.json<BlueprintId>({ id });
       },
       Err: (error) => {
         const { body, code } = error.response();

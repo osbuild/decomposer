@@ -5,6 +5,7 @@ import type { ServiceTask as Task } from '../types';
 export type BlueprintMetadata = Schemas['BlueprintItem'];
 export type Blueprints = Schemas['BlueprintsResponse'];
 export type BlueprintRequest = Schemas['CreateBlueprintRequest'];
+export type BlueprintId = Schemas['CreateBlueprintResponse'];
 
 // The types are a bit awkward here, we only need some of
 // the return type, so let's just wrap it in a `Partial`
@@ -17,4 +18,5 @@ export type BlueprintWithRequest = Omit<BlueprintMetadata, 'id'> &
 
 export type BlueprintService = {
   all: () => Task<BlueprintMetadata[]>;
+  add: (request: BlueprintRequest) => Task<BlueprintId>;
 };

@@ -44,4 +44,8 @@ export class Model {
       },
     );
   }
+
+  async findById(id: string) {
+    return Task.tryOrElse(normalizeError, async () => this.store.get(id));
+  }
 }

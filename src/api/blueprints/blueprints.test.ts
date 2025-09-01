@@ -18,6 +18,8 @@ describe('Blueprints handler tests', async () => {
     await rmdir(tmp, { recursive: true });
   });
 
+  let newBlueprint = '';
+
   describe('get blueprints test', () => {
     it('should initially have no blueprints', async () => {
       const res = await client.blueprints.$get();
@@ -37,6 +39,7 @@ describe('Blueprints handler tests', async () => {
       });
       expect(res.status).toBe(StatusCodes.OK);
       const { id } = await res.json();
+      newBlueprint = id;
       expect(validate(id)).toBeTrue();
     });
 
@@ -55,6 +58,27 @@ describe('Blueprints handler tests', async () => {
       expect(body.meta.count).toBe(1);
       expect(body.data).not.toBeUndefined();
       expect(body.data.length).toBe(1);
+    });
+  });
+
+  describe('get blueprint tests', () => {
+    it('should get a blueprint', async () => {
+      await Bun.sleep(4);
+      const res = await client.blueprints[':id'].$get({
+        param: { id: newBlueprint },
+      });
+      expect(res.status).toBe(StatusCodes.OK);
+      const body = (await res.json()) as Blueprints;
+      expect(body.name).toBe(blueprintRequest.name);
+      expect(body.description).toBe(blueprintRequest.description);
+    });
+
+    it('should return a 404 Response for a non-existing blueprint', async () => {
+      await Bun.sleep(4);
+      const res = await client.blueprints[':id'].$get({
+        param: { id: '1234' },
+      });
+      expect(res.status).toBe(StatusCodes.NOT_FOUND);
     });
   });
 });

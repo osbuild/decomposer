@@ -4,7 +4,12 @@ import Maybe from 'true-myth/maybe';
 import type { AppContext } from '@app/types';
 
 import { paginate } from '../pagination';
-import type { BlueprintId, BlueprintMetadata, Blueprints } from './types';
+import type {
+  Blueprint,
+  BlueprintId,
+  BlueprintMetadata,
+  Blueprints,
+} from './types';
 import * as validators from './validators';
 
 export const blueprints = new Hono<AppContext>()
@@ -49,6 +54,27 @@ export const blueprints = new Hono<AppContext>()
     return result.match({
       Ok: ({ id }) => {
         return ctx.json<BlueprintId>({ id });
+      },
+      Err: (error) => {
+        const { body, code } = error.response();
+        return ctx.json(body, code);
+      },
+    });
+  })
+
+  /**
+   * Get blueprint
+   *
+   * @rest show
+   */
+  .get('/blueprints/:id', async (ctx) => {
+    const id = ctx.req.param('id');
+    const { blueprint: service } = ctx.get('services');
+    const result = await service.get(id);
+
+    return result.match({
+      Ok: (blueprint) => {
+        return ctx.json<Blueprint>(blueprint);
       },
       Err: (error) => {
         const { body, code } = error.response();

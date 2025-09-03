@@ -1,0 +1,28 @@
+# API Endpoints
+
+The server exposes the following endpoints on `{{ api }}`:
+{{#each endpoint}}
+
+## {{ title }}
+
+{{#each routes}}
+-- `{{ method }} {{ @root/api }}{{ path }} - {{ description }}`
+{{/each}}
+{{#each routes}}
+
+### {{ description }}
+
+Example curl request:
+
+```bash
+{{{ bash }}}
+```
+
+Example HTTP request:
+
+```http
+{{{ http }}}
+```
+{{/each}}
+
+{{/each}}

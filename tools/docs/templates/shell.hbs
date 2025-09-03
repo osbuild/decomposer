@@ -1,0 +1,4 @@
+SOCKET="${SOCKET_PATH:-'{{default_socket}}'}"
+
+curl --silent --unix-socket $SOCKET \
+  --request {{ method }} "http://localhost{{ api }}{{ path }}"

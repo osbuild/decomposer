@@ -1,1 +1,2 @@
-tools/openapi/zod.schemas.hbs
+tools/**/*.hbs
+tools/**/*/*.hbs

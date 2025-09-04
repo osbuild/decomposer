@@ -5,9 +5,9 @@ import { createApp } from '@app/app';
 import type { Store } from '@app/store';
 import { createWorker } from '@app/worker';
 
-const executable = path.join(__dirname, '..', '__mocks__', 'ibcli');
+const mock = path.join(__dirname, '..', '__mocks__', 'ibcli');
 
-export const createTestClient = (store: Store) => {
+export const createTestClient = (store: Store, executable = mock) => {
   const worker = createWorker(store, executable);
   const { app } = createApp('', store, worker);
   const client = testClient(app);

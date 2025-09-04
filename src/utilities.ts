@@ -1,3 +1,5 @@
+import { arch } from 'node:os';
+
 export const removeSocket = async (socket: string) => {
   try {
     await Bun.file(socket).unlink();
@@ -9,4 +11,17 @@ export const removeSocket = async (socket: string) => {
     }
     console.error(error);
   }
+};
+
+export const getHostArch = () => {
+  const hostArch = arch();
+  if (['arm', 'arm64'].includes(hostArch)) {
+    return 'aarch64';
+  }
+
+  if (['x64'].includes(hostArch)) {
+    return 'x86_64';
+  }
+
+  throw Error('Unknown host arch');
 };

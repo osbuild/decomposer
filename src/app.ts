@@ -1,21 +1,29 @@
 import { Hono } from 'hono';
-import { pinoLogger } from 'hono-pino';
-import { prettyJSON } from 'hono/pretty-json';
 
 import { api } from '@app/api';
+import type { ComposeRequest } from '@app/api';
 import { API_ENDPOINT } from '@app/constants';
-import { notFound, onError } from '@app/errors';
-import { logger } from '@app/logger';
+import { createMiddleware } from '@app/middleware';
+import { createQueue } from '@app/queue';
+import type { Store } from '@app/store';
+import type { Worker } from '@app/worker';
 
-const middleware = new Hono()
-  .notFound(notFound)
-  .use(prettyJSON())
-  .use(pinoLogger({ pino: logger }));
+export const createApp = (
+  socket: string,
+  store: Store,
+  worker: Worker<ComposeRequest>,
+) => {
+  const queue = createQueue(worker);
+  const middleware = createMiddleware(queue, store);
 
-export const app = new Hono()
-  // we need to catch the errors either at the router
-  // level or the app level, otherwise the errors go
-  // uncaught
-  .onError(onError)
-  .route('*', middleware)
-  .route(API_ENDPOINT, api);
+  const app = new Hono()
+    // prettier-ignore (multiline is easier to read)
+    .route('*', middleware)
+    .route(API_ENDPOINT, api);
+
+  return {
+    app,
+    fetch: app.fetch,
+    unix: socket,
+  };
+};
